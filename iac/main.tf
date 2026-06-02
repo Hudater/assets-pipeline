@@ -10,7 +10,7 @@ terraform {
     hostname     = "app.terraform.io"
     organization = "homelab_hudater"
     workspaces {
-      name = "resume-pipeline"
+      name = "assets-pipeline"
     }
   }
 }
@@ -41,5 +41,11 @@ resource "cloudflare_worker_domain" "resume" {
   hostname   = "resume.hudater.dev"
   service    = cloudflare_worker_script.resume.name
   zone_id    = var.zone_id_hudater_dev
-  # override_existing_dns_record = true
+}
+
+resource "cloudflare_worker_domain" "showcase" {
+  account_id = var.cloudflare_account_id
+  hostname   = "showcase.hudater.dev"
+  service    = cloudflare_worker_script.resume.name
+  zone_id    = var.zone_id_hudater_dev
 }
