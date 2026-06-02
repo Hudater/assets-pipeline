@@ -89,7 +89,7 @@ jobs:
                 echo "Deleting old key: $key"
                 npx wrangler kv key delete "$key" \
                   --namespace-id "$KV_ID" \
-                  --remote --force
+                  --remote
               done
 
           # assets/resume/<file> → KV key: resume/<file>
