@@ -1,4 +1,4 @@
-name: "Resume Pipeline"
+name: "Assets Pipeline"
 
 on:
   workflow_dispatch:
@@ -24,7 +24,7 @@ env:
 
 jobs:
   deploy:
-    name: "Resume Deploy"
+    name: "Assets Deploy"
     runs-on: ubuntu-latest
     environment: production
 
@@ -79,8 +79,21 @@ jobs:
         run: |
           KV_ID=$(cd iac && tofu output -raw kv_namespace_id 2>/dev/null)
 
-          # assets/resume/<file> becomes KV key: resume/<file>
-          # assets/showcase/<file> becomes KV key: showcase/<file>
+          # purge old resume/ keys before uploading fresh
+          npx wrangler kv key list \
+            --prefix "resume/" \
+            --namespace-id "$KV_ID" \
+            --remote \
+            | jq -r '.[].name' \
+            | while read key; do
+                echo "Deleting old key: $key"
+                npx wrangler kv key delete "$key" \
+                  --namespace-id "$KV_ID" \
+                  --remote --force
+              done
+
+          # assets/resume/<file> → KV key: resume/<file>
+          # assets/showcase/<file> → KV key: showcase/<file>
           find assets -type f | while read filepath; do
             kvkey="${filepath#assets/}"
             echo "Uploading $filepath to $kvkey"
