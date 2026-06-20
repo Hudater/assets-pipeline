@@ -11,10 +11,13 @@ export default {
             // any path other than "/" redirects to "/"
             const filename = pathname === "/" ? null : pathname.slice(1);
             if (!filename) {
+                // OLD
                 // find and serve the single resume file
-                const list = await env.RESUME_KV.list({ prefix: "resume/" });
-                if (!list.keys.length) return new Response("Not found", { status: 404 });
-                kvKey = list.keys[0].name;
+                // const list = await env.RESUME_KV.list({ prefix: "resume/" });
+                // if (!list.keys.length) return new Response("Not found", { status: 404 });
+                // kvKey = list.keys[0].name;
+                // NEW: hardcoded filename to avoid thrashing by calling kv.list on each request
+                kvKey = "resume/Harshit_SRE_Infrastructure_DevOps_Resume.pdf";
             } else {
                 return Response.redirect("https://resume.hudater.dev/", 301);
             }
